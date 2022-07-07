@@ -6,6 +6,7 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\LogoutController;
 use App\Http\Controllers\ProductsController;
 use App\Http\Controllers\RegisterController;
+use App\Http\Controllers\StripeController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -51,6 +52,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/cart', [CartController::class, 'index']);
     Route::post('/cart', [CartController::class, 'store']);
     Route::post('/cart/decreaseQuantity', [CartController::class, 'decreaseQuantity']);
+    Route::get('stripe', [StripeController::class, 'stripe']);
+    Route::post('stripe', [StripeController::class, 'stripePost'])->name('stripe.post');
 
 });
 Route::get('/email/verify', function () {
