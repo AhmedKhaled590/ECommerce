@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rules\Password;
 
@@ -30,6 +31,8 @@ class RegisterController extends Controller
                 'city' => $request->city,
                 'password' => bcrypt($request->password),
             ]);
+            event(new Registered($user));
+            auth()->login($user);
             return response()->json(['user' => $user, 'message' => 'User Created Successfully'], 201);
         } catch (\Exception$e) {
             return response()->json(['message' => $e->getMessage()], 500);
