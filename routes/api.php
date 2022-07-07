@@ -45,4 +45,6 @@ Route::post('/products/addmultiple', [ProductsController::class, 'addMultiplePro
 Route::get('/categories/{id}/products', [ProductsController::class, 'getProducts']);
 Route::post('/categories/addmultiple', [CategoriesController::class, 'addMultipleCategories']);
 
-Route::resource('/cart', CartController::class)->middleware('auth:sanctum');
+Route::get('/cart', [CartController::class, 'index'])->middleware('auth:sanctum');
+Route::post('/cart', [CartController::class, 'store'])->middleware('auth:sanctum');
+Route::post('/cart/decreaseQuantity', [CartController::class, 'decreaseQuantity'])->middleware('auth:sanctum');
