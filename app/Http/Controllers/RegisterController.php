@@ -21,7 +21,9 @@ class RegisterController extends Controller
                 'state' => 'string|max:255',
                 'city' => 'required|string|max:255',
                 'password' => ['required', Password::defaults()],
+                'password_confirmation' => 'required|same:password',
             ]);
+
             $user = User::create([
                 'name' => $request->name,
                 'email' => $request->email,
@@ -31,6 +33,7 @@ class RegisterController extends Controller
                 'city' => $request->city,
                 'password' => bcrypt($request->password),
             ]);
+
             event(new Registered($user));
             auth()->login($user);
             return response()->json(['user' => $user, 'message' => 'User Created Successfully'], 201);
