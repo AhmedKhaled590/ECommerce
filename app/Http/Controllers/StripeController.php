@@ -37,16 +37,17 @@ class StripeController extends Controller
                 'cvc' => $request->cvc,
             ],
         ]);
+
         Stripe\Stripe::setApiKey(env('STRIPE_SECRET'));
         Stripe\Charge::create([
-            "amount" => 100 * 100,
-            "currency" => "usd",
+            "amount" => $request->amount * 100,
+            "currency" => $request->currency,
             "source" => $token,
             "description" => "Test payment from Khold",
         ]);
 
         Session::flash('success', 'Payment successful!');
 
-        return back();
+        return response()->json(['message' => 'Payment successful!']);
     }
 }

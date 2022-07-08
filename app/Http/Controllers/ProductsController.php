@@ -34,6 +34,8 @@ class ProductsController extends Controller
                 'images' => 'required',
                 'currency' => 'required|string|max:3',
             ]);
+            $path = $request->file('images')->storeAs('images', $request->file('images')->getClientOriginalName());
+            $body['images'] = $path;
             $product = product::create($body);
             return response()->json(['message' => 'product created successfully', 'product' => $product], 201);
         } catch (\Exception$e) {
@@ -75,11 +77,13 @@ class ProductsController extends Controller
                 'description' => 'string|max:255',
                 'price' => 'numeric',
                 'category_id' => 'numeric',
-                'images' => 'array',
+                'images' => 'string',
                 'currency' => 'string|max:3',
                 'quantity_available' => 'numeric',
                 'review' => 'string|max:255',
             ]);
+            $path = $request->file('images')->storeAs('images', $request->file('images')->getClientOriginalName());
+            $body['images'] = $path;
             $product->update($body);
             return response()->json(['message' => 'product updated successfully', 'product' => $product], 200);
         } catch (\Exception$e) {
@@ -115,6 +119,8 @@ class ProductsController extends Controller
             ]);
             $products = $body['products'];
             foreach ($products as $product) {
+                $path = $product['images']->storeAs('images', $product['images']->getClientOriginalName());
+                $product['images'] = $path;
                 $product = product::create($product);
             }
             return response()->json(['message' => 'products added successfully', 'products' => $products], 201);
