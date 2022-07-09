@@ -14,7 +14,7 @@ class ProductsController extends Controller
      */
     public function index()
     {
-        return product::all();
+        return product::paginate(4);
     }
 
     /**
@@ -119,8 +119,7 @@ class ProductsController extends Controller
             ]);
             $products = $body['products'];
             foreach ($products as $product) {
-                $path = $product['images']->storeAs('images', $product['images']->getClientOriginalName());
-                $product['images'] = $path;
+
                 $product = product::create($product);
             }
             return response()->json(['message' => 'products added successfully', 'products' => $products], 201);
