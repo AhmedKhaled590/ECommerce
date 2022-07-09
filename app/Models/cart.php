@@ -25,7 +25,7 @@ class cart extends Model
         parent::boot();
 
         static::saving(function ($model) {
-            $model->user_id = auth()->user()->id;
+            $model->user_id = auth()->user() ? auth()->user()->id : $model->user_id;
             $model->price_per_quantity = $model->products->price * $model->quantity;
         });
     }
