@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
@@ -10,6 +11,8 @@ use Illuminate\Support\Str;
  */
 class UserFactory extends Factory
 {
+
+    protected $model = User::class;
     /**
      * Define the model's default state.
      *
@@ -23,6 +26,13 @@ class UserFactory extends Factory
             'email_verified_at' => now(),
             'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
             'remember_token' => Str::random(10),
+            'is_admin' => $this->faker->boolean(50),
+            'address' => $this->faker->address,
+            'phone_number' => $this->faker->phoneNumber,
+            'created_at' => now(),
+            'updated_at' => now(),
+            'state' => $this->faker->state,
+            'city' => $this->faker->city,
         ];
     }
 
