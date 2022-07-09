@@ -27,6 +27,16 @@ class cart extends Model
         static::saving(function ($model) {
             $model->user_id = auth()->user() ? auth()->user()->id : $model->user_id;
             $model->price_per_quantity = $model->products->price * $model->quantity;
+            if ($model->quantity > $model->products->quantity_available) {
+                return false;
+            }
+            $model->products->quantity_available -= $model->quantity;
+            $model->products->save();
+        });
+
+        static::deleted(function ($model) {
+            $model->products->quantity_available += $model->quantity;
+            $model->products->save();
         });
     }
 }

@@ -26,6 +26,8 @@ class ProductFactory extends Factory
             'category_id' => category::factory(1)->create()[0]->id,
             'images' => $this->faker->imageUrl(300, 300),
             'currency' => $this->faker->currencyCode,
+            'quantity_available' => $this->faker->numberBetween(1, 200),
+            'review' => $this->faker->randomFloat(2, 0, 5),
         ];
 
     }
