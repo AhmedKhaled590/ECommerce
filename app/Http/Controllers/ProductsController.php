@@ -137,5 +137,4 @@ class ProductsController extends Controller
         }
         return response()->json(['message' => 'product found successfully', 'category' => $product->categories], 200);
     }
-
 }
