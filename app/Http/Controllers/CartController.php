@@ -35,6 +35,9 @@ class CartController extends Controller
     public function store(Request $request)
     {
         try {
+            $cart_size = DB::table('carts')
+                ->where('user_id', $request->user_id)
+                ->count();
             $body = $request->validate([
                 'product_id' => 'required|numeric',
                 'quantity' => 'required|numeric',
@@ -46,7 +49,16 @@ class CartController extends Controller
             } else {
                 $cart = cart::create($body);
             }
-            return response()->json(['message' => 'product added to cart successfully', 'cart' => $cart], 201);
+            $cart_size_after_add = DB::table('carts')
+                ->where('user_id', $request->user_id)
+                ->count();
+
+            if ($cart_size_after_add > $cart_size) {
+                return response()->json(['message' => 'product added to cart successfully', 'cart' => $cart], 201);
+            } else {
+                return response()->json(['message' => "sorry,we can't provide this quantity."], 400);
+            }
+
         } catch (\Exception$e) {
             return response()->json(['message' => $e->getMessage()], 500);
         }
