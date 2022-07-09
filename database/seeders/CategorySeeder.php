@@ -3,17 +3,10 @@
 namespace Database\Seeders;
 
 use App\Models\category;
-use App\Models\product;
 use Illuminate\Database\Seeder;
 
-class ProductSeeder extends Seeder
+class CategorySeeder extends Seeder
 {
-
-    protected static function newFactory()
-    {
-        return ProductFactory::class;
-    }
-
     /**
      * Run the database seeds.
      *
@@ -21,6 +14,7 @@ class ProductSeeder extends Seeder
      */
     public function run()
     {
-        product::factory(1)->create();
+        category::factory(100)->create();
+        // dd(category::factory(1)->create()[0]);
     }
 }
