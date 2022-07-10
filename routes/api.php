@@ -8,6 +8,7 @@ use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\ProductsController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\StripeController;
+use App\Http\Controllers\UploadController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -53,6 +54,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/dashboard', function () {
         return 'dashboard';
     });
+
+    Route::post('upload', [UploadController::class, 'store']);
 
     Route::middleware('is_admin')->group(function () {
         Route::post('/products/addmultiple', [ProductsController::class, 'addMultipleProducts']);

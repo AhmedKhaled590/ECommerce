@@ -10,10 +10,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
-class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
+class User extends Authenticatable implements MustVerifyEmail, CanResetPassword, HasMedia
 {
-    use HasApiTokens, HasFactory, Notifiable, PasswordsCanResetPassword;
+    use HasApiTokens, HasFactory, Notifiable, PasswordsCanResetPassword, InteractsWithMedia;
 
     /**
      * The attributes that are mass assignable.
@@ -29,6 +31,7 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
         'state',
         'city',
         'email_verified_at',
+        'avatar',
     ];
 
     /**
@@ -74,5 +77,10 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
         return Attribute::make(
             get:fn($value) => explode(' ', $this->name)[count($splits) - 1],
         );
+    }
+
+    public static function last()
+    {
+        return static::all()->last();
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\TemporaryFile;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
@@ -33,6 +34,12 @@ class RegisterController extends Controller
                 'city' => $request->city,
                 'password' => bcrypt($request->password),
             ]);
+
+            $tempFile = TemporaryFile::where('folder', $request->avatar)->first();
+            $user->addMedia(storage_path('app/public/avatars/tmp/' . $tempFile->folder . '/' . $tempFile->filename))
+                ->toMediaCollection('avatars');
+            rmdir(storage_path('app/public/avatars/tmp/' . $tempFile->folder));
+            $tempFile->delete();
 
             event(new Registered($user));
             auth()->login($user);
