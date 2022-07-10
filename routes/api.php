@@ -4,6 +4,7 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\CategoriesController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\LogoutController;
+use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\ProductsController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\StripeController;
@@ -33,9 +34,22 @@ Route::get('/login', function () {
 Route::post('/register', [RegisterController::class, 'register']);
 Route::post('/login', [LoginController::class, 'login']);
 
+Route::get('/forgot-password', function () {
+    return 'Forget Password Page';
+})->name('password.request');
+
+Route::get('/reset-password/{token}', function ($token) {
+    return 'Reset Password Page';
+})->name('password.reset');
+
+Route::post('/forgot-password', [PasswordResetController::class, 'forget'])->name('password.email');
+
+Route::post('/reset-password', [PasswordResetController::class, 'reset'])->name('password.update');
+
 Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('/logout', [LogoutController::class, 'logout'])->middleware('auth:sanctum');
+
     Route::get('/dashboard', function () {
         return 'dashboard';
     });

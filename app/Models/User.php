@@ -2,15 +2,18 @@
 
 namespace App\Models;
 
+use Illuminate\Auth\Passwords\CanResetPassword as PasswordsCanResetPassword;
+use Illuminate\Contracts\Auth\CanResetPassword;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
-class User extends Authenticatable implements MustVerifyEmail
+class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, PasswordsCanResetPassword;
 
     /**
      * The attributes that are mass assignable.
@@ -50,5 +53,26 @@ class User extends Authenticatable implements MustVerifyEmail
     public function cart()
     {
         return $this->hasOne('App\Models\cart');
+    }
+
+    protected function firstName(): Attribute
+    {
+        $splits = explode(' ', $this->name);
+        $toReturn = 0;
+        //check if first name is prof or mr or mrs or miss or dr or sir or rev or etc and return the first name
+        if ($splits[0] == 'Prof.' || $splits[0] == 'Mr.' || $splits[0] == 'Mrs.' || $splits[0] == 'Miss.' || $splits[0] == 'Dr.' || $splits[0] == 'Sir' || $splits[0] == 'Rev') {
+            $toReturn = 1;
+        }
+        return Attribute::make(
+            get:fn($value) => explode(' ', $this->name)[$toReturn],
+        );
+    }
+
+    protected function lastName(): Attribute
+    {
+        $splits = explode(' ', $this->name);
+        return Attribute::make(
+            get:fn($value) => explode(' ', $this->name)[count($splits) - 1],
+        );
     }
 }

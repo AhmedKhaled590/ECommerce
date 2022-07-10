@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -18,6 +19,14 @@ class cart extends Model
     public function users()
     {
         return $this->belongsTo('App\Models\User', 'user_id');
+    }
+
+    protected function pricePerQuantity(): Attribute
+    {
+        return new Attribute(
+            get:fn($value) => $value * 2,
+        );
+
     }
 
     protected static function boot()
