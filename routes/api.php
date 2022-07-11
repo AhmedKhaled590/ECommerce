@@ -9,6 +9,7 @@ use App\Http\Controllers\ProductsController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\StripeController;
 use App\Http\Controllers\UploadController;
+use App\Models\User;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -23,10 +24,6 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
  */
-
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
 
 Route::get('/login', function () {
     return 'please login';
@@ -49,7 +46,14 @@ Route::post('/reset-password', [PasswordResetController::class, 'reset'])->name(
 
 Route::middleware('auth:sanctum')->group(function () {
 
-    Route::post('/logout', [LogoutController::class, 'logout'])->middleware('auth:sanctum');
+    Route::middleware('auth:sanctum')->get('/users', function (Request $request) {
+        return User::select(['id', 'name', 'email', 'created_at'])->get()->map(function ($user) {
+            $user->registered = $user->created_at->diffForHumans();
+            return $user;
+        });
+    });
+
+    Route::post('/logout', [LogoutController::class, 'logout']);
 
     Route::get('/dashboard', function () {
         return 'dashboard';
@@ -63,11 +67,10 @@ Route::middleware('auth:sanctum')->group(function () {
 
         Route::post('/categories/addmultiple', [CategoriesController::class, 'addMultipleCategories']);
         Route::resource('categories', CategoriesController::class)->only(['store', 'update', 'destroy']);
-
-        Route::post('/cart/decreaseQuantity', [CartController::class, 'decreaseQuantity']);
-        Route::post('/cart', [CartController::class, 'store']);
-
     });
+
+    Route::post('/cart/decreaseQuantity', [CartController::class, 'decreaseQuantity']);
+    Route::post('/cart', [CartController::class, 'store']);
 
     Route::get('/products/{id}/category', [ProductsController::class, 'getCategory']);
     Route::resource('products', ProductsController::class)->only(['index', 'show']);
