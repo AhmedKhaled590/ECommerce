@@ -53,6 +53,12 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword,
         'email_verified_at' => 'datetime',
     ];
 
+    protected $dates = [
+        'created_at',
+        'updated_at',
+        'deleted_at',
+    ];
+
     public function cart()
     {
         return $this->hasOne('App\Models\cart');

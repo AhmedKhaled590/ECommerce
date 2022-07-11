@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\cart;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class CartController extends Controller
 {
@@ -15,11 +16,8 @@ class CartController extends Controller
     public function index()
     {
         try {
-            $cart = DB::table('carts')
-                ->join('products', 'carts.product_id', '=', 'products.id')
-                ->join('users', 'carts.user_id', '=', 'users.id')
-                ->select('carts.*', 'products.name', 'products.price', 'users.name as user_name')
-                ->get();
+            Log::debug('CartController::index', ['user_id' => auth()->user()->id]);
+            $cart = cart::with('products')->where('user_id', auth()->user()->id)->get();
             return response()->json(['message' => 'cart retrieved successfully', 'cart' => $cart], 200);
         } catch (\Exception$e) {
             return response()->json(['message' => $e->getMessage()], 500);
@@ -36,7 +34,7 @@ class CartController extends Controller
     {
         try {
             $cart_size = DB::table('carts')
-                ->where('user_id', $request->user_id)
+                ->where('user_id', auth()->user()->id)
                 ->count();
             $body = $request->validate([
                 'product_id' => 'required|numeric',
@@ -46,13 +44,14 @@ class CartController extends Controller
             $productId = $body['product_id'];
             if ($cart = cart::where('user_id', auth()->user()->id)->where('product_id', $productId)->first()) {
                 $cart->increment('quantity', $body['quantity']);
+                $cart->save();
+                return response()->json(['message' => 'product added to cart successfully', 'cart' => $cart], 201);
             } else {
                 $cart = cart::create($body);
             }
-            $cart_size_after_add = DB::table('carts')
-                ->where('user_id', $request->user_id)
+            $cart_size_after_add = cart::with('products', 'users')
+                ->where('user_id', auth()->user()->id)
                 ->count();
-
             if ($cart_size_after_add > $cart_size) {
                 return response()->json(['message' => 'product added to cart successfully', 'cart' => $cart], 201);
             } else {
