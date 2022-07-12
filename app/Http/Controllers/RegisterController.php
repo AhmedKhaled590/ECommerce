@@ -35,11 +35,13 @@ class RegisterController extends Controller
                 'password' => bcrypt($request->password),
             ]);
 
-            $tempFile = TemporaryFile::where('folder', $request->avatar)->first();
-            $user->addMedia(storage_path('app/public/avatars/tmp/' . $tempFile->folder . '/' . $tempFile->filename))
-                ->toMediaCollection('avatars');
-            rmdir(storage_path('app/public/avatars/tmp/' . $tempFile->folder));
-            $tempFile->delete();
+            if ($request->avatar) {
+                $tempFile = TemporaryFile::where('folder', $request->avatar)->first();
+                $user->addMedia(storage_path('app/public/avatars/tmp/' . $tempFile->folder . '/' . $tempFile->filename))
+                    ->toMediaCollection('avatars');
+                rmdir(storage_path('app/public/avatars/tmp/' . $tempFile->folder));
+                $tempFile->delete();
+            }
 
             event(new Registered($user));
             auth()->login($user);
