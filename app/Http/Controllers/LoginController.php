@@ -18,11 +18,11 @@ class LoginController extends Controller
             ]);
             $user = User::where('email', $credentials['email'])->first();
             if (!$user) {
-                return response()->json(['message' => 'Invalid Email'], 401);
+                return response()->json(['message' => 'Invalid Email'], 404);
 
             }
             if (!Hash::check($credentials['password'], $user->password)) {
-                return response()->json(['message' => 'Invalid Password'], 401);
+                return response()->json(['message' => 'Invalid Password'], 404);
             }
             $token = $user->createToken('myapptoken', ['remember'])->plainTextToken;
             return response()->json(['message' => 'Login Successful', 'token' => $token], 200);

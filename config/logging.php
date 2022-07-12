@@ -55,6 +55,11 @@ return [
             'driver' => 'single',
             'path' => storage_path('logs/php-deprecation-warnings.log'),
         ],
+        'testLogs' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/testLogs.log'),
+            'level' => 'debug',
+        ],
         'stack' => [
             'driver' => 'stack',
             'channels' => ['single'],
