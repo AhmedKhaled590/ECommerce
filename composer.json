@@ -14,7 +14,8 @@
         "laravel/sanctum": "^2.15",
         "laravel/tinker": "^2.7",
         "spatie/laravel-medialibrary": "^10.4",
-        "stripe/stripe-php": "^8.9"
+        "stripe/stripe-php": "^8.9",
+        "fakerphp/faker": "^1.9.1"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",
