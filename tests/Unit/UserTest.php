@@ -16,6 +16,7 @@ class UserTest extends TestCase
      *
      * @return void
      */
+
     public function test_check_register_user_success()
     {
         $response = $this->post('/api/register', [
