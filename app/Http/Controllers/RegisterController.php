@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\TemporaryFile;
 use App\Models\User;
+use App\Notifications\WelcomeEmailNotifiaction;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rules\Password;
@@ -44,6 +45,7 @@ class RegisterController extends Controller
             }
 
             event(new Registered($user));
+            $user->notify(new WelcomeEmailNotifiaction());
             auth()->login($user);
             return response()->json(['user' => $user, 'message' => 'User Created Successfully'], 201);
         } catch (\Exception$e) {
