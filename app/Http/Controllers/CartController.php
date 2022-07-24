@@ -18,7 +18,15 @@ class CartController extends Controller
         try {
             Log::debug('CartController::index', ['user_id' => auth()->user()->id]);
             $cart = cart::with('products')->where('user_id', auth()->user()->id)->get();
-            return response()->json(['message' => 'cart retrieved successfully', 'cart' => $cart], 200);
+            $totalPrice = 0;
+            foreach ($cart as $item) {
+                $totalPrice += $item->price_per_quantity;
+            }
+            $response = [
+                'total_price' => $totalPrice,
+                'data' => $cart,
+            ];
+            return response()->json(['message' => 'cart retrieved successfully', 'resonse' => $response], 200);
         } catch (\Exception$e) {
             return response()->json(['message' => $e->getMessage()], 500);
         }
@@ -42,12 +50,16 @@ class CartController extends Controller
             ]);
             $body['price_per_quantity'] = 0;
             $productId = $body['product_id'];
+
             if ($cart = cart::where('user_id', auth()->user()->id)->where('product_id', $productId)->first()) {
+                $cart->products->quantity_available -= $body['quantity'];
                 $cart->increment('quantity', $body['quantity']);
                 $cart->save();
                 return response()->json(['message' => 'product added to cart successfully', 'cart' => $cart], 201);
             } else {
                 $cart = cart::create($body);
+                $cart->products->quantity_available -= $body['quantity'];
+                $cart->products->save();
             }
             $cart_size_after_add = cart::with('products', 'users')
                 ->where('user_id', auth()->user()->id)
