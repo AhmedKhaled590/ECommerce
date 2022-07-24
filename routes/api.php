@@ -7,6 +7,7 @@ use App\Http\Controllers\LogoutController;
 use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\ProductsController;
 use App\Http\Controllers\RegisterController;
+use App\Http\Controllers\SearchController;
 use App\Http\Controllers\StripeController;
 use App\Http\Controllers\UploadController;
 use App\Models\User;
@@ -60,6 +61,7 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     Route::post('upload', [UploadController::class, 'store']);
+    // search route for products
 
     Route::middleware('is_admin')->group(function () {
         Route::post('/products/addmultiple', [ProductsController::class, 'addMultipleProducts']);
@@ -74,6 +76,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/products/{id}/category', [ProductsController::class, 'getCategory']);
     Route::resource('products', ProductsController::class)->only(['index', 'show']);
+
+    Route::post('/search/products', [SearchController::class, 'index']);
 
     Route::get('/categories/{id}/products', [ProductsController::class, 'getProducts']);
     Route::resource('categories', CategoriesController::class)->only(['index', 'show']);

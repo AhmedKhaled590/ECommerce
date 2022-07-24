@@ -10,6 +10,9 @@ class cart extends Model
 {
     use HasFactory;
     protected $fillable = ['user_id', 'product_id', 'quantity'];
+    // protected $attributes = [
+    //     'price_per_quantity' => 0,
+    // ];
 
     public function products()
     {
@@ -35,11 +38,10 @@ class cart extends Model
 
         static::saving(function ($model) {
             $model->user_id = auth()->user() ? auth()->user()->id : $model->user_id;
-            $model->price_per_quantity = $model->products->price * $model->quantity;
+            $model->price_per_quantity = $model->products->price * $model->quantity / 2;
             if ($model->quantity > $model->products->quantity_available) {
                 return false;
             }
-            $model->products->quantity_available -= $model->quantity;
             $model->products->save();
         });
 
